@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UniRx;
 using UniRx.Triggers;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace Kenny
 {
@@ -18,6 +19,7 @@ namespace Kenny
         public Button soundButton;
 
         private ISoundManager soundManager;
+        private IStartManager startManager;
 
         void Start()
         {
@@ -30,11 +32,14 @@ namespace Kenny
             soundButton.OnClickAsObservable().Subscribe(_ => ToggleSound()).AddTo(this);
 
             // Инициализация менеджера звука
-            soundManager = new SoundManager();
+            soundManager = new SoundManager(); 
+            // Инициализация менеджера start
+            startManager = new StartManager();
         }
 
         void StartGame()
         {
+            startManager.StartGame();
             Debug.Log("Игра начата!");
             //  
         }
@@ -68,6 +73,11 @@ namespace Kenny
     {
         bool ToggleSound();
     }
+    // Интерфейс для менеджера звука
+    public interface IStartManager
+    {
+        void StartGame();
+    }
 
     // Реализация менеджера звука
     public class SoundManager : ISoundManager
@@ -78,6 +88,14 @@ namespace Kenny
         {
             soundActive = !soundActive;
             return soundActive;
+        }
+    }
+
+    public class StartManager : IStartManager
+    {
+        public void StartGame()
+        {
+            SceneManager.LoadScene("mvvm", LoadSceneMode.Single);
         }
     }
 
